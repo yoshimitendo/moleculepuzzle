@@ -55,7 +55,7 @@ function creatSelect() {
         piece.style.left = `${piece.X}px`
         piece.style.top = `${piece.Y}px`
         piece.style.scale = "0";
-        piece.scale = 0.6;
+        piece.scale = 0.3;
         piece.isAnimating = false;
         setTimeout(() => {
             soft(piece);
@@ -64,14 +64,14 @@ function creatSelect() {
         piece.addEventListener("pointerdown", (e) => {
             e.preventDefault();
             piece.isPointer = true;
-            piece.style.filter = "brightness(1.5)";
+            piece.style.filter = "brightness(1.6)";
             piece.style.zIndex = "1";
             piece.oldX = piece.X;
             piece.oldY = piece.Y;
             piece.pointerX = e.clientX;
             piece.pointerY = e.clientY;
 
-            piece.scale = 1.2;
+            piece.scale = 1.4;
             piece.scaleSpeed = 0;
             soft(piece);
             
@@ -115,8 +115,8 @@ function soft(p) {
     p.isAnimating = true;
     p.scaleSpeed = 0;
     function animate(){
-        p.scaleSpeed += (1 - p.scale) * 0.08;
-        p.scaleSpeed *= 0.94;
+        p.scaleSpeed += (1 - p.scale) * 0.1;
+        p.scaleSpeed *= 0.9;
         p.scale += p.scaleSpeed;
         p.style.scale = p.scale
         if (Math.abs(p.scale - 1) < 0.005 && Math.abs(p.scaleSpeed) < 0.005) {
