@@ -1,3 +1,7 @@
+document.addEventListener('dblclick', function(e) {
+    e.preventDefault();
+}, { passive: false });
+
 const selectLayer = document.getElementById("select");
 
 for (let i = 0; i < 4; i++) {
@@ -7,13 +11,15 @@ for (let i = 0; i < 4; i++) {
     selectLayer.appendChild(selection);
     selection.style.scale = "0";
     selection.scale = 0;
-    soft(selection);
+    setTimeout(() => {
+        soft(selection);
+    }, i * 40);
 }
 
 function soft(selection) {
     let scaleSpeed = 0;
     function animate(){
-        scaleSpeed += (1 - selection.scale) * 0.08;
+        scaleSpeed += (1 - selection.scale) * 0.1;
         scaleSpeed = scaleSpeed * 0.95;
         selection.scale += scaleSpeed;
         selection.style.scale = `${selection.scale}`
