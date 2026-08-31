@@ -14,22 +14,22 @@ body {
     user-select: none;
     -webkit-user-select: none;
 
-    background: #756b6b;
+    background: #232323;
 }
 
 #game {
     flex-shrink: 0;
-
-    background: #232323;
 }
 
 .pieces {
     position: absolute;
     width: 150px;
     height: 150px;
+    padding-bottom: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-sizing: border-box;
 
     cursor: pointer;
 
@@ -37,11 +37,4 @@ body {
     font-size: 100px;
     color: #e4e5e5;
     font-family: sans-serif;
-    border: 2px solid #4886ad;
-    background: #4886ad;
-    background: radial-gradient(
-        circle,
-        #4886ad00 0%,
-        #4886ad8c 100%
-    );
 }
