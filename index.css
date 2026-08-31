@@ -9,51 +9,39 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
 
     touch-action: none;
     user-select: none;
     -webkit-user-select: none;
 
+    background: #756b6b;
+}
+
+#game {
+    flex-shrink: 0;
+
     background: #232323;
 }
 
-#build {
-    position: relative;
-    align-self: stretch;
-    margin: 5px 5px;
-    height: 100%;
-}
-
-#select {
-    position: relative;
-    align-self: stretch;
-    margin: 5px 5px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid white;
-}
-
-.selections {
-    margin: 5px;
-    width: 60px;
-    height: 60px;
+.pieces {
+    position: absolute;
+    width: 150px;
+    height: 150px;
     display: flex;
     justify-content: center;
     align-items: center;
 
     cursor: pointer;
 
-    border-radius: 30px;
-    font-size: 24px;
+    border-radius: 50%;
+    font-size: 100px;
     color: #e4e5e5;
     font-family: sans-serif;
+    border: 2px solid #4886ad;
     background: #4886ad;
     background: radial-gradient(
         circle,
-        #4886ad 0%,
-        #4886ad00 70%
+        #4886ad00 0%,
+        #4886ad8c 100%
     );
 }
