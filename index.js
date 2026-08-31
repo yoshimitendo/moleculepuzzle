@@ -7,8 +7,6 @@ const gameLayer = document.getElementById("game");
 const GAME_WIDTH = 1080;
 const GAME_HEIGHT = 1920;
 
-const SELECT_HEIGHT = 1000;
-
 gameLayer.style.width = `${GAME_WIDTH}px`;
 gameLayer.style.height = `${GAME_HEIGHT}px`;
 
@@ -23,11 +21,29 @@ function resizeGame() {
 window.addEventListener("resize", resizeGame);
 const GAME_SCALE = resizeGame();
 
+const SELECT_HEIGHT = 1000;
+
+const ELEMENTS = [
+    {text: "H", color: "#4987ae"},
+    {text: "C", color: "#2c8a5d"},
+    {text: "O", color: "#9d333e"}
+];
+
 for (let i = 0; i < 4; i++) {
     const piece= document.createElement("div");
     piece.className = "pieces";
-    piece.textContent = "H";
+    piece.element = Math.floor(Math.random() * ELEMENTS.length);
     gameLayer.appendChild(piece);
+
+    piece.textContent = ELEMENTS[piece.element].text;
+    piece.style.background = `
+        radial-gradient(
+            circle,
+            ${ELEMENTS[piece.element].color + "00"} 0%,
+            ${ELEMENTS[piece.element].color + "8c"} 100%)
+    `;
+    piece.style.border = 
+        `2px solid ${ELEMENTS[piece.element].color}`
     piece.X = i * 200;
     piece.Y = SELECT_HEIGHT;
     piece.style.left = `${piece.X}px`
@@ -50,6 +66,10 @@ for (let i = 0; i < 4; i++) {
         piece.oldY = piece.Y;
         piece.pointerX = e.clientX;
         piece.pointerY = e.clientY;
+
+        piece.scale = 1.5;
+        piece.scaleSpeed = 0;
+        soft(piece);
         
         piece.setPointerCapture(e.pointerId);
     })
@@ -77,13 +97,13 @@ for (let i = 0; i < 4; i++) {
 function soft(p) {
     if (p.isAnimating) return;
     p.isAnimating = true;
-    let scaleSpeed = 0;
+    p.scaleSpeed = 0;
     function animate(){
-        scaleSpeed += (1 - p.scale) * 0.08;
-        scaleSpeed = scaleSpeed * 0.94;
-        p.scale += scaleSpeed;
+        p.scaleSpeed += (1 - p.scale) * 0.08;
+        p.scaleSpeed *= 0.94;
+        p.scale += p.scaleSpeed;
         p.style.scale = p.scale
-        if (Math.abs(p.scale - 1) < 0.005 && Math.abs(scaleSpeed) < 0.005) {
+        if (Math.abs(p.scale - 1) < 0.005 && Math.abs(p.scaleSpeed) < 0.005) {
             p.isAnimating = false;
             return;
         }
