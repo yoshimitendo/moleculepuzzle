@@ -1,0 +1,58 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+
+    background: #232323;
+}
+
+#build {
+    position: relative;
+    align-self: stretch;
+    margin: 5px 5px;
+    height: 100%;
+}
+
+#select {
+    position: relative;
+    align-self: stretch;
+    margin: 5px 5px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid white;
+}
+
+.selections {
+    margin: 5px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+
+    border-radius: 30px;
+    font-size: 24px;
+    color: #e4e5e5;
+    background: #4886ad;
+    background: radial-gradient(
+        circle,
+        #4886ad 0%,
+        #4886ad00 70%
+    );
+}
