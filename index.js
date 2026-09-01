@@ -34,10 +34,7 @@ const ELEMENTS = [
     {text: "H", color: "#4987ae", arm: 1},
     {text: "C", color: "#2c8a5d", arm: 4},
     {text: "N", color: "#9f6035", arm: 3},
-    {text: "O", color: "#9d333e", arm: 2},
-    {text: "F", color: "#4987ae", arm: 1},
-    {text: "S", color: "#9d333e", arm: 2},
-    {text: "Cl", color: "#4987ae", arm: 1}
+    {text: "O", color: "#9d333e", arm: 2}
 ];
 
 const selectPiece = [];
@@ -53,16 +50,19 @@ function creatSelect(i, j, d) {
         radial-gradient(
             circle,
             ${ELEMENTS[piece.element].color + "22"} 0%,
-            ${ELEMENTS[piece.element].color + "99"} 100%)
+            ${ELEMENTS[piece.element].color + "99"} 100%
+        )
     `;
     piece.style.border = 
-        `3px solid ${ELEMENTS[piece.element].color}`
-    piece.style.width = `${GRID_SIZE}px`
-    piece.style.height = `${GRID_SIZE}px`
-    piece.X = i * (GRID_SIZE + GRID_GAP);
-    piece.Y = j * (GRID_SIZE + GRID_GAP);
-    piece.style.left = `${piece.X}px`
-    piece.style.top = `${piece.Y}px`
+        `3px solid ${ELEMENTS[piece.element].color}`;
+    piece.style.width = `${GRID_SIZE}px`;
+    piece.style.height = `${GRID_SIZE}px`;
+    piece.GridX = i;
+    piece.GridY = j;
+    piece.style.left = 
+        `${piece.GridX * (GRID_SIZE + GRID_GAP)}px`;
+    piece.style.top = 
+        `${piece.GridY * (GRID_SIZE + GRID_GAP)}px`;
     piece.style.scale = "0";
     piece.scale = 0.3;
     piece.isAnimating = false;
@@ -82,7 +82,7 @@ function soft(p) {
     p.isAnimating = true;
     p.scaleSpeed = 0;
     function animate(){
-        p.scaleSpeed += (1 - p.scale) * 0.1;
+        p.scaleSpeed += (1 - p.scale) * 0.15;
         p.scaleSpeed *= 0.9;
         p.scale += p.scaleSpeed;
         p.style.scale = p.scale
@@ -100,13 +100,7 @@ let isPointer = false;
 document.addEventListener("pointerdown", (e) => {
     const target = document.elementFromPoint(e.clientX, e.clientY);
     if (target?.classList.contains("pieces")) {
-        target.style.filter = "brightness(1.6)";
-        
-        target.scale = 1.6;
-        target.scaleSpeed = 0;
-        soft(target);
-
-        selectPiece.push(target);
+        addPiece(target);
     }
 
     isPointer = true;
@@ -115,6 +109,8 @@ document.addEventListener("pointerdown", (e) => {
 document.addEventListener("pointerup", (e) => {
     selectPiece.forEach((e) => {
         e.style.filter = "brightness(1)";
+        e.style.border = 
+        `3px solid ${ELEMENTS[e.element].color}`;
     })
     selectPiece.length = 0;
 
@@ -126,12 +122,18 @@ document.addEventListener("pointermove", (e) => {
     const target = document.elementFromPoint(e.clientX, e.clientY);
     if (target?.classList.contains("pieces")) {
         if (selectPiece.includes(target)) return;
-        target.style.filter = "brightness(1.6)";
-
-        target.scale = 1.6;
-        target.scaleSpeed = 0;
-        soft(target);
-
-        selectPiece.push(target);
+        addPiece(target);
     }
 })
+
+function addPiece(t) {
+    t.style.filter = "brightness(1.5)";
+    t.style.border = 
+        `5px solid ${ELEMENTS[t.element].color}`;
+
+    t.scale = 1.6;
+    t.scaleSpeed = 0;
+    soft(t);
+
+    selectPiece.push(t);
+}
