@@ -43,3 +43,9 @@ body {
     color: #e4e5e5;
     font-family: sans-serif;
 }
+
+.lines {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background: #e4e5e5;
+}
