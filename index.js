@@ -64,7 +64,7 @@ function creatSelect(i, j, d) {
     piece.style.top = 
         `${piece.GridY * (GRID_SIZE + GRID_GAP)}px`;
     piece.style.scale = "0";
-    piece.scale = 0.3;
+    piece.scale = 0.4;
     piece.isAnimating = false;
     setTimeout(() => {
         soft(piece);
@@ -101,9 +101,8 @@ document.addEventListener("pointerdown", (e) => {
     const target = document.elementFromPoint(e.clientX, e.clientY);
     if (target?.classList.contains("pieces")) {
         addPiece(target);
+        isPointer = true;
     }
-
-    isPointer = true;
 })
 
 document.addEventListener("pointerup", (e) => {
@@ -120,10 +119,23 @@ document.addEventListener("pointerup", (e) => {
 document.addEventListener("pointermove", (e) => {
     if (!isPointer) return;
     const target = document.elementFromPoint(e.clientX, e.clientY);
-    if (target?.classList.contains("pieces")) {
-        if (selectPiece.includes(target)) return;
-        addPiece(target);
+    if (!target?.classList.contains("pieces")) return;
+    if (selectPiece.includes(target)) {
+        const index = selectPiece.findIndex(i => i === target);
+        if (index === selectPiece.length - 2) {
+            const last = selectPiece[selectPiece.length - 1]
+            last.style.filter = "brightness(1)";
+            last.style.border = 
+                `3px solid ${ELEMENTS[last.element].color}`;
+            selectPiece.splice(selectPiece.length - 1, 1)
+        }
+        return;
     }
+    const gapX = Math.abs(target.GridX - selectPiece[selectPiece.length - 1].GridX);
+    const gapY = Math.abs(target.GridY - selectPiece[selectPiece.length - 1].GridY);
+    if (gapX + gapY !== 1) return;
+    addPiece(target);
+
 })
 
 function addPiece(t) {
@@ -131,7 +143,7 @@ function addPiece(t) {
     t.style.border = 
         `5px solid ${ELEMENTS[t.element].color}`;
 
-    t.scale = 1.6;
+    t.scale = 1.4;
     t.scaleSpeed = 0;
     soft(t);
 
