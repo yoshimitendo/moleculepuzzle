@@ -24,8 +24,8 @@ const GAME_SCALE = resizeGame();
 
 const GRID_COLS = 5;
 const GRID_ROWS = 6;
-const GRID_SIZE = 160;
-const GRID_GAP = 30;
+const GRID_SIZE = 170;
+const GRID_GAP = 20;
 
 boardLayer.style.width = `${GRID_COLS * (GRID_SIZE + GRID_GAP) - GRID_GAP}px`;
 boardLayer.style.height = `${GRID_ROWS * (GRID_SIZE + GRID_GAP) - GRID_GAP}px`;
@@ -82,7 +82,7 @@ function soft(p) {
     p.isAnimating = true;
     p.scaleSpeed = 0;
     function animate(){
-        p.scaleSpeed += (1 - p.scale) * 0.15;
+        p.scaleSpeed += (1 - p.scale) * 0.12;
         p.scaleSpeed *= 0.9;
         p.scale += p.scaleSpeed;
         p.style.scale = p.scale
@@ -139,7 +139,7 @@ document.addEventListener("pointermove", (e) => {
 })
 
 function addPiece(t) {
-    t.style.filter = "brightness(1.5)";
+    t.style.filter = "brightness(1.6)";
     t.style.border = 
         `5px solid ${ELEMENTS[t.element].color}`;
 
