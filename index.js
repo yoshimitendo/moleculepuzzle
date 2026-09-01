@@ -30,8 +30,7 @@ const ELEMENTS = [
     {text: "O", color: "#9d333e", arm: 2}
 ];
 
-const selectElements = [];
-const buildElements = [];
+const pieces = [];
 
 function creatSelect() {
     for (let i = 0; i < 4; i++) {
@@ -39,7 +38,6 @@ function creatSelect() {
         piece.className = "pieces";
         piece.element = Math.floor(Math.random() * ELEMENTS.length);
         gameLayer.appendChild(piece);
-        selectElements.push(piece);
 
         piece.textContent = ELEMENTS[piece.element].text;
         piece.style.background = `
@@ -59,7 +57,7 @@ function creatSelect() {
         piece.isAnimating = false;
         setTimeout(() => {
             soft(piece);
-        }, i * 40);
+        }, i * 30);
 
         piece.addEventListener("pointerdown", (e) => {
             e.preventDefault();
@@ -86,15 +84,6 @@ function creatSelect() {
             piece.isPointer = false;
 
             piece.releasePointerCapture(e.pointerId);
-
-            const index = selectElements.findIndex(i => i === piece);
-            selectElements.splice(index,1);
-            buildElements.push(piece);
-            for (let i = 0; i < 3; i++) {
-                selectElements[0].remove();
-                selectElements.splice(0,1);
-            }
-            creatSelect();
         })
 
         piece.addEventListener("pointermove", (e) => {
