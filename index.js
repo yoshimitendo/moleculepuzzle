@@ -22,12 +22,13 @@ function resizeGame() {
 window.addEventListener("resize", resizeGame);
 const GAME_SCALE = resizeGame();
 
-const GRID_COLS = 4;
+const GRID_COLS = 5;
 const GRID_ROWS = 6;
-const GRID_SIZE = 200;
+const GRID_SIZE = 160;
+const GRID_GAP = 30;
 
-boardLayer.style.width = `${GRID_COLS * GRID_SIZE}px`;
-boardLayer.style.height = `${GRID_ROWS * GRID_SIZE}px`;
+boardLayer.style.width = `${GRID_COLS * (GRID_SIZE + GRID_GAP) - GRID_GAP}px`;
+boardLayer.style.height = `${GRID_ROWS * (GRID_SIZE + GRID_GAP) - GRID_GAP}px`;
 
 const ELEMENTS = [
     {text: "H", color: "#4987ae", arm: 1},
@@ -38,6 +39,8 @@ const ELEMENTS = [
     {text: "S", color: "#9d333e", arm: 2},
     {text: "Cl", color: "#4987ae", arm: 1}
 ];
+
+const selectPiece = [];
 
 function creatSelect(i, j, d) {
     const piece= document.createElement("div");
@@ -54,8 +57,10 @@ function creatSelect(i, j, d) {
     `;
     piece.style.border = 
         `3px solid ${ELEMENTS[piece.element].color}`
-    piece.X = i * GRID_SIZE;
-    piece.Y = j * GRID_SIZE;
+    piece.style.width = `${GRID_SIZE}px`
+    piece.style.height = `${GRID_SIZE}px`
+    piece.X = i * (GRID_SIZE + GRID_GAP);
+    piece.Y = j * (GRID_SIZE + GRID_GAP);
     piece.style.left = `${piece.X}px`
     piece.style.top = `${piece.Y}px`
     piece.style.scale = "0";
@@ -64,42 +69,6 @@ function creatSelect(i, j, d) {
     setTimeout(() => {
         soft(piece);
     }, d);
-
-    piece.addEventListener("pointerdown", (e) => {
-        e.preventDefault();
-        piece.isPointer = true;
-        piece.style.filter = "brightness(1.6)";
-        piece.style.zIndex = "1";
-        piece.oldX = piece.X;
-        piece.oldY = piece.Y;
-        piece.pointerX = e.clientX;
-        piece.pointerY = e.clientY;
-
-        piece.scale = 1.4;
-        piece.scaleSpeed = 0;
-        soft(piece);
-        
-        piece.setPointerCapture(e.pointerId);
-    })
-
-    piece.addEventListener("pointerup", (e) => {
-        e.preventDefault();
-        if (!piece.isPointer) return;
-        piece.style.filter = "brightness(1.0)";
-        piece.style.zIndex = "0";
-        piece.isPointer = false;
-
-        piece.releasePointerCapture(e.pointerId);
-    })
-
-    piece.addEventListener("pointermove", (e) => {
-        e.preventDefault();
-        if (!piece.isPointer) return;
-        piece.X = (e.clientX - piece.pointerX) / GAME_SCALE + piece.oldX;
-        piece.Y = (e.clientY - piece.pointerY) / GAME_SCALE + piece.oldY;
-        piece.style.left = `${piece.X}px`;
-        piece.style.top = `${piece.Y}px`;
-    })
 }
 
 for (let i = 0; i < GRID_COLS; i++) {
@@ -117,7 +86,7 @@ function soft(p) {
         p.scaleSpeed *= 0.9;
         p.scale += p.scaleSpeed;
         p.style.scale = p.scale
-        if (Math.abs(p.scale - 1) < 0.005 && Math.abs(p.scaleSpeed) < 0.005) {
+        if (Math.abs(p.scale - 1) < 0.01 && Math.abs(p.scaleSpeed) < 0.01) {
             p.isAnimating = false;
             return;
         }
@@ -125,3 +94,44 @@ function soft(p) {
     }
     requestAnimationFrame(animate);
 }
+
+let isPointer = false;
+
+document.addEventListener("pointerdown", (e) => {
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    if (target?.classList.contains("pieces")) {
+        target.style.filter = "brightness(1.6)";
+        
+        target.scale = 1.6;
+        target.scaleSpeed = 0;
+        soft(target);
+
+        selectPiece.push(target);
+    }
+
+    isPointer = true;
+})
+
+document.addEventListener("pointerup", (e) => {
+    selectPiece.forEach((e) => {
+        e.style.filter = "brightness(1)";
+    })
+    selectPiece.length = 0;
+
+    isPointer = false;
+})
+
+document.addEventListener("pointermove", (e) => {
+    if (!isPointer) return;
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    if (target?.classList.contains("pieces")) {
+        if (selectPiece.includes(target)) return;
+        target.style.filter = "brightness(1.6)";
+
+        target.scale = 1.6;
+        target.scaleSpeed = 0;
+        soft(target);
+
+        selectPiece.push(target);
+    }
+})
