@@ -4,6 +4,7 @@ document.addEventListener('dblclick', function(e) {
 
 const gameLayer = document.getElementById("game");
 const boardLayer = document.getElementById("board");
+const titleLayer = document.getElementById("title");
 
 const GAME_WIDTH = 1080;
 const GAME_HEIGHT = 1920;
@@ -39,9 +40,18 @@ const ELEMENTS = [
 
 const MOLECULES = [
     {text: "H₂", con: ["H", "H"]},
-    {text: "N₂", con: ["N", "N"]},
     {text: "O₂", con: ["O", "O"]},
-    {text: "CH₃COOH", con: ["C", "H", "H", "H", "C", "O", "O", "H"].sort()}
+    {text: "N₂", con: ["N", "N"]},
+    {text: "H₂O", con: ["H", "H", "O"]},
+    {text: "NH₃", con: ["N", "H", "H", "H"]},
+    {text: "CO", con: ["C", "O"]},
+    {text: "CO₂", con: ["C", "O", "O"]},
+    {text: "NO", con: ["N", "O"]},
+    {text: "NO₂", con: ["N", "O", "O"]},
+    {text: "N₂O", con: ["N", "N", "O"]},
+    {text: "H₂O₂", con: ["H", "H", "O", "O"]},
+
+    {text: "CH₃COOH", con: ["C", "H", "H", "H", "C", "O", "O", "H"]}
 ]
 
 const selectPiece = [];
@@ -114,10 +124,14 @@ document.addEventListener("pointerdown", (e) => {
 
 document.addEventListener("pointerup", (e) => {
     const molecule = ismolecule(selectPiece);
-    
     console.log(molecule)
-    
 
+    if (molecule != null) {
+        titleLayer.textContent = molecule.text;
+    } else {
+        titleLayer.textContent = "";
+    }
+    
     selectPiece.forEach((e) => {
         e.style.filter = "brightness(1)";
         e.style.border = 
@@ -207,12 +221,11 @@ function ismolecule(s) {
     s.forEach((e) => {
         selectText.push(ELEMENTS[e.element].text);
     })
-    const sort = [...selectText].sort();
+    const sSort = [...selectText].sort();
     let molecule = null;
     MOLECULES.forEach((m) => {
-        console.log(sort, m.con)
-        console.log(sort === m.con)
-        if (sort === m.con) {
+        const mSort = [...m.con].sort();
+        if (sSort.length === mSort.length && sSort.every((value, index) => value === mSort[index])) {
             molecule = m;
         }
     })
