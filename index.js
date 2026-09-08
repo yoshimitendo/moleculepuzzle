@@ -41,6 +41,7 @@ const MOLECULES = [
     {text: "H₂", con: ["H", "H"]},
     {text: "N₂", con: ["N", "N"]},
     {text: "O₂", con: ["O", "O"]},
+    {text: "CH₃COOH", con: ["C", "H", "H", "H", "C", "O", "O", "H"].sort()}
 ]
 
 const selectPiece = [];
@@ -112,6 +113,11 @@ document.addEventListener("pointerdown", (e) => {
 })
 
 document.addEventListener("pointerup", (e) => {
+    const molecule = ismolecule(selectPiece);
+    
+    console.log(molecule)
+    
+
     selectPiece.forEach((e) => {
         e.style.filter = "brightness(1)";
         e.style.border = 
@@ -194,4 +200,21 @@ function createLine(x, y, x2, y2) {
         `${x * (GRID_SIZE + GRID_GAP) + GRID_SIZE / 2 + dx * (GRID_SIZE + GRID_GAP) / 2}px`;
     line.style.top = 
         `${y * (GRID_SIZE + GRID_GAP) + GRID_SIZE / 2 + dy * (GRID_SIZE + GRID_GAP) / 2}px`;
+}
+
+function ismolecule(s) {
+    const selectText = [];
+    s.forEach((e) => {
+        selectText.push(ELEMENTS[e.element].text);
+    })
+    const sort = [...selectText].sort();
+    let molecule = null;
+    MOLECULES.forEach((m) => {
+        console.log(sort, m.con)
+        console.log(sort === m.con)
+        if (sort === m.con) {
+            molecule = m;
+        }
+    })
+    return molecule;
 }
