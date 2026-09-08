@@ -124,8 +124,6 @@ document.addEventListener("pointerdown", (e) => {
 
 document.addEventListener("pointerup", (e) => {
     const molecule = ismolecule(selectPiece);
-    console.log(molecule)
-
     if (molecule != null) {
         titleLayer.textContent = molecule.text;
     } else {
