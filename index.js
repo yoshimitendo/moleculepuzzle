@@ -39,19 +39,19 @@ const ELEMENTS = [
 ];
 
 const MOLECULES = [
-    {text: "H₂", con: ["H", "H"]},
-    {text: "O₂", con: ["O", "O"]},
-    {text: "N₂", con: ["N", "N"]},
-    {text: "H₂O", con: ["H", "H", "O"]},
-    {text: "NH₃", con: ["N", "H", "H", "H"]},
-    {text: "CO", con: ["C", "O"]},
-    {text: "CO₂", con: ["C", "O", "O"]},
-    {text: "NO", con: ["N", "O"]},
-    {text: "NO₂", con: ["N", "O", "O"]},
-    {text: "N₂O", con: ["N", "N", "O"]},
-    {text: "H₂O₂", con: ["H", "H", "O", "O"]},
+    {text: "水素", con: ["H", "H"]},
+    {text: "酸素", con: ["O", "O"]},
+    {text: "窒素", con: ["N", "N"]},
+    {text: "水", con: ["H", "H", "O"]},
+    {text: "アンモニア", con: ["N", "H", "H", "H"]},
+    {text: "一酸化炭素", con: ["C", "O"]},
+    {text: "二酸化炭素", con: ["C", "O", "O"]},
+    {text: "一酸化窒素", con: ["N", "O"]},
+    {text: "二酸化窒素", con: ["N", "O", "O"]},
+    {text: "一酸化二窒素", con: ["N", "N", "O"]},
+    {text: "過酸化水素", con: ["H", "H", "O", "O"]},
 
-    {text: "CH₃COOH", con: ["C", "H", "H", "H", "C", "O", "O", "H"]}
+    {text: "酢酸", con: ["C", "H", "H", "H", "C", "O", "O", "H"]}
 ]
 
 const selectPiece = [];
@@ -94,6 +94,13 @@ for (let i = 0; i < GRID_COLS; i++) {
     }
 }
 
+let target = null;
+nextTarget();
+function nextTarget() {
+    target = Math.floor(Math.random() * MOLECULES.length)
+    titleLayer.textContent = MOLECULES[target].text
+}
+
 function soft(p) {
     if (p.isAnimating) return;
     p.isAnimating = true;
@@ -123,13 +130,9 @@ document.addEventListener("pointerdown", (e) => {
 })
 
 document.addEventListener("pointerup", (e) => {
-    const molecule = ismolecule(selectPiece);
-    if (molecule != null) {
-        titleLayer.textContent = molecule.text;
-    } else {
-        titleLayer.textContent = "";
+    if (ismolecule(selectPiece)) {
+        nextTarget();
     }
-    
     selectPiece.forEach((e) => {
         e.style.filter = "brightness(1)";
         e.style.border = 
@@ -217,15 +220,9 @@ function createLine(x, y, x2, y2) {
 function ismolecule(s) {
     const selectText = [];
     s.forEach((e) => {
-        selectText.push(ELEMENTS[e.element].text);
+      selectText.push(ELEMENTS[e.element].text);
     })
     const sSort = [...selectText].sort();
-    let molecule = null;
-    MOLECULES.forEach((m) => {
-        const mSort = [...m.con].sort();
-        if (sSort.length === mSort.length && sSort.every((value, index) => value === mSort[index])) {
-            molecule = m;
-        }
-    })
-    return molecule;
+    const mSort = [...MOLECULES[target].con].sort();
+    return sSort.length === mSort.length && sSort.every((value, index) => value === mSort[index]);
 }
