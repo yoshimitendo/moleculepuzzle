@@ -43,6 +43,7 @@ const MOLECULES = [
     {text: "酸素", con: ["O", "O"]},
     {text: "窒素", con: ["N", "N"]},
     {text: "水", con: ["H", "H", "O"]},
+    {text: "オゾン", con: ["O", "O", "O"]},
     {text: "アンモニア", con: ["N", "H", "H", "H"]},
     {text: "一酸化炭素", con: ["C", "O"]},
     {text: "二酸化炭素", con: ["C", "O", "O"]},
@@ -50,6 +51,7 @@ const MOLECULES = [
     {text: "二酸化窒素", con: ["N", "O", "O"]},
     {text: "一酸化二窒素", con: ["N", "N", "O"]},
     {text: "過酸化水素", con: ["H", "H", "O", "O"]},
+    {text: "メタン", con: ["C", "H", "H", "H", "H"]},
 
     {text: "酢酸", con: ["C", "H", "H", "H", "C", "O", "O", "H"]}
 ]
@@ -220,7 +222,7 @@ function createLine(x, y, x2, y2) {
 function ismolecule(s) {
     const selectText = [];
     s.forEach((e) => {
-      selectText.push(ELEMENTS[e.element].text);
+        selectText.push(ELEMENTS[e.element].text);
     })
     const sSort = [...selectText].sort();
     const mSort = [...MOLECULES[target].con].sort();
