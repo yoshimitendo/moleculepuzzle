@@ -80,12 +80,12 @@ function creatSelect(i, j, d) {
     piece.style.left = 
         `${piece.GridX * (GRID_SIZE + GRID_GAP)}px`;
     piece.style.top = `0px`;
-    piece.animeY = 0;
+    piece.animeY = - 180 - d;
     piece.scale = 1;
+    piece.style.transform = 
+                `translateY(${piece.animeY}px)`;
     piece.isAnimating = false;
-    setTimeout(() => {
-        animates(piece);
-    }, d);
+    animates(piece);
 }
 
 function animates(p) {
@@ -132,7 +132,7 @@ let isPointer = false;
 
 for (let i = 0; i < GRID_ROWS; i++) {
     for (let j = 0; j < 3; j++) {
-        creatSelect(i, j, (i + j) * 40);
+        creatSelect(i, j, i * 50 + (2 - j) * 180);
     }
 }
 
