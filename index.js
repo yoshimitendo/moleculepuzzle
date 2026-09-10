@@ -81,9 +81,7 @@ function creatSelect(i, j, d) {
         `${piece.GridX * (GRID_SIZE + GRID_GAP)}px`;
     piece.style.top = `0px`;
     piece.animeY = 0;
-    piece.scale = 0.4;
-    piece.style.transform = 
-        `translateY(${piece.animeY}px) scale(0)`;
+    piece.scale = 1;
     piece.isAnimating = false;
     setTimeout(() => {
         animates(piece);
@@ -93,24 +91,26 @@ function creatSelect(i, j, d) {
 function animates(p) {
     if (p.isAnimating) return;
     p.isAnimating = true;
-    p.scaleSpeed = 0;
-    p.fallSpeed = 0;
+    let scaleSpeed = 0;
+    let fallSpeed = 0;
     let isScale = true;
     let isFall = true
     function animate(){
-        p.scaleSpeed += (1 - p.scale) * 0.12;
-        p.scaleSpeed *= 0.9;
-        p.scale += p.scaleSpeed;
+        scaleSpeed += (1 - p.scale) * 0.12;
+        scaleSpeed *= 0.9;
+        p.scale += scaleSpeed;
         isScale = true;
-        if (Math.abs(p.scale - 1) < 0.01 && Math.abs(p.scaleSpeed) < 0.01) {
+        if (Math.abs(p.scale - 1) < 0.01 && Math.abs(scaleSpeed) < 0.01) {
             p.scale = 1;
+            scaleSpeed = 0;
             isScale = false;
         }
-        p.fallSpeed += 1;
-        p.animeY += p.fallSpeed;
+        fallSpeed += 1;
+        p.animeY += fallSpeed;
         isFall = true;
         if (p.animeY > p.GridY * (GRID_SIZE + GRID_GAP)) {
             p.animeY = p.GridY * (GRID_SIZE + GRID_GAP);
+            fallSpeed = 0;
             isFall = false;
         }
         p.style.transform = 
@@ -160,7 +160,6 @@ document.addEventListener("pointerup", (e) => {
         i.forEach((j) => {
             if (j === null) return;
             j.GridY++;
-            j.fallSpeed = 0;
             animates(j);
         })
     })
@@ -215,7 +214,6 @@ function addPiece(t) {
         `5px solid ${ELEMENTS[t.element].col}`;
 
     t.scale = 1.3;
-    t.scaleSpeed = 0;
     animates(t);
 
     selectPieces.push(t);
