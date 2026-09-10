@@ -40,7 +40,7 @@ body {
 
 #board {
     position: absolute;
-    top: -80px;
+    top: -160px;
 }
 
 .pieces {
