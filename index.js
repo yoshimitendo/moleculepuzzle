@@ -23,19 +23,19 @@ function resizeGame() {
 window.addEventListener("resize", resizeGame);
 const GAME_SCALE = resizeGame();
 
-const GRID_COLS = 5;
-const GRID_ROWS = 6;
-const GRID_SIZE = 170;
+const GRID_ROWS = 5;
+const GRID_COLS = 8;
+const GRID_SIZE = 160;
 const GRID_GAP = 20;
 
-boardLayer.style.width = `${GRID_COLS * (GRID_SIZE + GRID_GAP) - GRID_GAP}px`;
-boardLayer.style.height = `${GRID_ROWS * (GRID_SIZE + GRID_GAP) - GRID_GAP}px`;
+boardLayer.style.width = `${GRID_ROWS * (GRID_SIZE + GRID_GAP) - GRID_GAP}px`;
+boardLayer.style.height = `${GRID_COLS * (GRID_SIZE + GRID_GAP) - GRID_GAP}px`;
 
 const ELEMENTS = [
-    {text: "H", col: "#4987ae", arm: 1},
-    {text: "C", col: "#2c8a5d", arm: 4},
-    {text: "N", col: "#9f6035", arm: 3},
-    {text: "O", col: "#9d333e", arm: 2}
+    {text: "H", col: "#4987ae"},
+    {text: "C", col: "#2c8a5d"},
+    {text: "N", col: "#9f6035"},
+    {text: "O", col: "#9d333e"}
 ];
 
 const MOLECULES = [
@@ -56,13 +56,12 @@ const MOLECULES = [
     {text: "酢酸", con: ["C", "H", "H", "H", "C", "O", "O", "H"]}
 ]
 
-const selectPiece = [];
-
 function creatSelect(i, j, d) {
-    const piece= document.createElement("div");
+    const piece = document.createElement("div");
     piece.className = "pieces";
     piece.element = Math.floor(Math.random() * ELEMENTS.length);
     boardLayer.appendChild(piece);
+    grid[i][j] = piece;
 
     piece.textContent = ELEMENTS[piece.element].text;
     piece.style.background = `
@@ -80,39 +79,43 @@ function creatSelect(i, j, d) {
     piece.GridY = j;
     piece.style.left = 
         `${piece.GridX * (GRID_SIZE + GRID_GAP)}px`;
-    piece.style.top = 
-        `${piece.GridY * (GRID_SIZE + GRID_GAP)}px`;
-    piece.style.scale = "0";
+    piece.style.top = `0px`;
+    piece.animeY = 0;
     piece.scale = 0.4;
+    piece.style.transform = 
+        `translateY(${piece.animeY}px) scale(0)`;
     piece.isAnimating = false;
     setTimeout(() => {
-        soft(piece);
+        animates(piece);
     }, d);
 }
 
-for (let i = 0; i < GRID_COLS; i++) {
-    for (let j = 0; j < GRID_ROWS; j++) {
-        creatSelect(i, j, (i + j) * 40);
-    }
-}
-
-let target = null;
-nextTarget();
-function nextTarget() {
-    target = Math.floor(Math.random() * MOLECULES.length)
-    titleLayer.textContent = MOLECULES[target].text
-}
-
-function soft(p) {
+function animates(p) {
     if (p.isAnimating) return;
     p.isAnimating = true;
     p.scaleSpeed = 0;
+    p.fallSpeed = 0;
+    let isScale = true;
+    let isFall = true
     function animate(){
         p.scaleSpeed += (1 - p.scale) * 0.12;
         p.scaleSpeed *= 0.9;
         p.scale += p.scaleSpeed;
-        p.style.scale = p.scale
+        isScale = true;
         if (Math.abs(p.scale - 1) < 0.01 && Math.abs(p.scaleSpeed) < 0.01) {
+            p.scale = 1;
+            isScale = false;
+        }
+        p.fallSpeed += 1;
+        p.animeY += p.fallSpeed;
+        isFall = true;
+        if (p.animeY > p.GridY * (GRID_SIZE + GRID_GAP)) {
+            p.animeY = p.GridY * (GRID_SIZE + GRID_GAP);
+            isFall = false;
+        }
+        p.style.transform = 
+                `translateY(${p.animeY}px) scale(${p.scale})`;
+        if (!isScale && !isFall) {
             p.isAnimating = false;
             return;
         }
@@ -121,7 +124,17 @@ function soft(p) {
     requestAnimationFrame(animate);
 }
 
+let grid = Array.from({length: GRID_ROWS}, () => 
+    Array(GRID_COLS).fill(null)
+);
+const selectPieces = [];
 let isPointer = false;
+
+for (let i = 0; i < GRID_ROWS; i++) {
+    for (let j = 0; j < 3; j++) {
+        creatSelect(i, j, (i + j) * 40);
+    }
+}
 
 document.addEventListener("pointerdown", (e) => {
     const target = document.elementFromPoint(e.clientX, e.clientY);
@@ -132,19 +145,36 @@ document.addEventListener("pointerdown", (e) => {
 })
 
 document.addEventListener("pointerup", (e) => {
-    if (ismolecule(selectPiece)) {
-        nextTarget();
-    }
-    selectPiece.forEach((e) => {
+    selectPieces.forEach((e) => {
         e.style.filter = "brightness(1)";
         e.style.border = 
         `3px solid ${ELEMENTS[e.element].col}`;
+        e.remove();
     })
-    selectPiece.length = 0;
+    selectPieces.length = 0;
+    document.querySelectorAll(".lines").forEach((e) => {
+        e.remove();
+    })
+    
+    grid.forEach((i) => {
+        i.forEach((j) => {
+            if (j === null) return;
+            j.GridY++;
+            j.fallSpeed = 0;
+            animates(j);
+        })
+    })
+    for (let i = 0; i < GRID_ROWS; i++) {
+            creatSelect(i, 0, 0);
+    }
 
-    document.querySelectorAll(".lines").forEach(element => {
-        element.remove();
+    const newGrid = Array.from({length: GRID_ROWS}, () => 
+        Array(GRID_COLS).fill(null)
+    );
+    document.querySelectorAll(".pieces").forEach((e) => {
+        newGrid[e.GridX][e.GridY] = e;
     })
+    grid = newGrid;
 
     isPointer = false;
 })
@@ -153,14 +183,14 @@ document.addEventListener("pointermove", (e) => {
     if (!isPointer) return;
     const target = document.elementFromPoint(e.clientX, e.clientY);
     if (!target?.classList.contains("pieces")) return;
-    if (selectPiece.includes(target)) {
-        const index = selectPiece.findIndex(i => i === target);
-        if (index === selectPiece.length - 2) {
-            const last = selectPiece[selectPiece.length - 1]
+    if (selectPieces.includes(target)) {
+        const index = selectPieces.findIndex(i => i === target);
+        if (index === selectPieces.length - 2) {
+            const last = selectPieces[selectPieces.length - 1]
             last.style.filter = "brightness(1)";
             last.style.border = 
                 `3px solid ${ELEMENTS[last.element].col}`;
-            selectPiece.splice(selectPiece.length - 1, 1)
+            selectPieces.splice(selectPieces.length - 1, 1)
             document.querySelectorAll(".lines").forEach(element => {
                 element.remove();
             })
@@ -168,8 +198,8 @@ document.addEventListener("pointermove", (e) => {
         }
         return;
     }
-    const gapX = Math.abs(target.GridX - selectPiece[selectPiece.length - 1].GridX);
-    const gapY = Math.abs(target.GridY - selectPiece[selectPiece.length - 1].GridY);
+    const gapX = Math.abs(target.GridX - selectPieces[selectPieces.length - 1].GridX);
+    const gapY = Math.abs(target.GridY - selectPieces[selectPieces.length - 1].GridY);
     if (gapX + gapY !== 1) return;
     document.querySelectorAll(".lines").forEach(element => {
         element.remove();
@@ -186,14 +216,14 @@ function addPiece(t) {
 
     t.scale = 1.3;
     t.scaleSpeed = 0;
-    soft(t);
+    animates(t);
 
-    selectPiece.push(t);
+    selectPieces.push(t);
 }
 
 function genLine() {
-    for (let i = 1; i < selectPiece.length; i++) {
-        createLine(selectPiece[i].GridX, selectPiece[i].GridY, selectPiece[i - 1].GridX, selectPiece[i - 1].GridY)
+    for (let i = 1; i < selectPieces.length; i++) {
+        createLine(selectPieces[i].GridX, selectPieces[i].GridY, selectPieces[i - 1].GridX, selectPieces[i - 1].GridY)
     }
 }
 
