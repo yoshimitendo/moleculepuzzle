@@ -23,6 +23,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    border: solid 2px white;
 }
 
 #title {
@@ -39,6 +40,7 @@ body {
 
 #board {
     position: absolute;
+    top: -80px;
 }
 
 .pieces {
